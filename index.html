@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #ff7eb3, #ff758c, #42aaff);
+            color: #fff;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            width: 200px;
+            font-size: 1rem;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #ff758c;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff7eb3;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prime Explorer</h1>
+    <p>Discover the wonders of prime numbers!</p>
+    <div class="container">
+        <p>Enter a number to find the nth prime or generate the first n primes:</p>
+        <input type="number" id="primeInput" placeholder="Enter a number" />
+        <br>
+        <button onclick="findNthPrime()">Find nth Prime</button>
+        <button onclick="generateFirstPrimes()">Generate First n Primes</button>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        function sieveOfEratosthenes(limit) {
+            const primes = new Array(limit + 1).fill(true);
+            primes[0] = primes[1] = false;
+
+            for (let i = 2; i * i <= limit; i++) {
+                if (primes[i]) {
+                    for (let j = i * i; j <= limit; j += i) {
+                        primes[j] = false;
+                    }
+                }
+            }
+
+            return primes
+                .map((isPrime, index) => (isPrime ? index : null))
+                .filter((num) => num !== null);
+        }
+
+        function generateNthPrime(n) {
+            if (n < 1) return null;
+            let limit = 100;
+            let primes = [];
+
+            while (primes.length < n) {
+                primes = sieveOfEratosthenes(limit);
+                limit *= 2;
+            }
+
+            return primes[n - 1];
+        }
+
+        function generatePrimes(n) {
+            let limit = 100;
+            let primes = [];
+
+            while (primes.length < n) {
+                primes = sieveOfEratosthenes(limit);
+                limit *= 2;
+            }
+
+            return primes.slice(0, n);
+        }
+
+        function findNthPrime() {
+            const n = parseInt(document.getElementById("primeInput").value);
+            if (isNaN(n) || n < 1) {
+                document.getElementById("output").innerHTML = "Please enter a valid positive number.";
+                return;
+            }
+
+            const nthPrime = generateNthPrime(n);
+            document.getElementById("output").innerHTML = `The ${n}th prime is: <strong>${nthPrime}</strong>`;
+        }
+
+        function generateFirstPrimes() {
+            const n = parseInt(document.getElementById("primeInput").value);
+            if (isNaN(n) || n < 1) {
+                document.getElementById("output").innerHTML = "Please enter a valid positive number.";
+                return;
+            }
+
+            const primes = generatePrimes(n);
+            document.getElementById("output").innerHTML = `The first ${n} primes are: <strong>${primes.join(", ")}</strong>`;
+        }
+    </script>
+</body>
+</html>
